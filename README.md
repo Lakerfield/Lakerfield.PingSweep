@@ -26,10 +26,16 @@ ping-sweep
 
 ### CLI mode
 
-Pass a CIDR range directly to sweep non-interactively. Online hosts are printed as they respond, followed by a sorted list.
+Pass a range directly to sweep non-interactively. Online hosts are printed as they respond, followed by a sorted list.
+
+Two range formats are supported:
 
 ```bash
+# CIDR notation
 ping-sweep 192.168.1.0/24
+
+# Dash notation (last-octet range)
+ping-sweep 192.168.1.1-100
 ```
 
 ## Requirements
