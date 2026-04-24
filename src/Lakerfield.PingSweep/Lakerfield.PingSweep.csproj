@@ -18,6 +18,8 @@
     <PackageId>Lakerfield.PingSweep</PackageId>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/Lakerfield/Lakerfield.PingSweep</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
