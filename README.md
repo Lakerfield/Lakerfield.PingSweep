@@ -2,6 +2,8 @@
 
 A fast .NET global tool for sweeping a network range and discovering online hosts.
 
+<img width="550" height="324" alt="image" src="https://github.com/user-attachments/assets/7e49fb40-b0cb-4740-b0ac-31379f9eb987" />
+
 ## Installation
 
 ```bash
