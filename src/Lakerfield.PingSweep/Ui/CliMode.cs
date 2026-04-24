@@ -8,10 +8,10 @@ public static class CliMode
 {
   public static async Task RunAsync(string cidrArg)
   {
-    if (!CidrRange.TryParse(cidrArg, out var range) || range is null)
+    if (!IpRange.TryParse(cidrArg, out var range) || range is null)
     {
-      AnsiConsole.MarkupLine($"[red]Error:[/] Invalid CIDR range: [yellow]{cidrArg}[/]");
-      AnsiConsole.MarkupLine("Usage: ping-sweep [bold]<cidr>[/]  e.g. [dim]192.168.1.0/24[/]");
+      AnsiConsole.MarkupLine($"[red]Error:[/] Invalid range: [yellow]{cidrArg}[/]");
+      AnsiConsole.MarkupLine("Usage: ping-sweep [bold]<range>[/]  e.g. [dim]192.168.1.0/24[/]  or  [dim]192.168.1.1-100[/]");
       Environment.Exit(1);
       return;
     }
@@ -21,7 +21,7 @@ public static class CliMode
 
     var onlineResults = new List<PingResult>();
 
-    await foreach (var result in PingSweepService.SweepAsync(range!))
+    await foreach (var result in PingSweepService.SweepAsync(range))
     {
       if (result.IsOnline)
       {

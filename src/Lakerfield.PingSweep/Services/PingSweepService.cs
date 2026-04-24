@@ -9,7 +9,7 @@ namespace Lakerfield.PingSweep.Services;
 public static class PingSweepService
 {
   public static async IAsyncEnumerable<PingResult> SweepAsync(
-    CidrRange range,
+    IpRange range,
     int timeoutMs = 1000,
     int maxConcurrency = 100,
     [EnumeratorCancellation] CancellationToken cancellationToken = default)

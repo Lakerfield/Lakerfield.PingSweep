@@ -1,3 +1,4 @@
+using System.Text;
 using Lakerfield.PingSweep.Models;
 using Lakerfield.PingSweep.Services;
 using Spectre.Console;
@@ -37,17 +38,8 @@ public static class TuiMode
 
     // Step 2: Confirm/edit CIDR range
     var defaultCidr = CidrRange.FromInterface(selectedInterface).ToString();
-    var cidrInput = AnsiConsole.Prompt(
-      new TextPrompt<string>("CIDR range to scan:")
-        .DefaultValue(defaultCidr)
-        .Validate(input =>
-        {
-          if (CidrRange.TryParse(input, out _))
-            return ValidationResult.Success();
-          return ValidationResult.Error("[red]Invalid CIDR notation.[/] Example: 192.168.1.0/24");
-        }));
-
-    var range = CidrRange.Parse(cidrInput);
+    var cidrInput = PromptEditable("CIDR range to scan: ", defaultCidr);
+    var range = IpRange.Parse(cidrInput);
 
     AnsiConsole.WriteLine();
     AnsiConsole.MarkupLine($"Scanning [green]{range}[/] [dim]({range.FirstHost} - {range.LastHost},[/] [yellow]{range.HostCount}[/][dim] hosts)[/]");
@@ -103,6 +95,49 @@ public static class TuiMode
     AnsiConsole.Write(sortedTable);
     AnsiConsole.WriteLine();
     AnsiConsole.MarkupLine($"[bold]Sweep complete.[/] [green]{onlineResults.Count}[/]/[yellow]{range.HostCount}[/] hosts online.");
+  }
+
+  // Prints the prompt with the default value pre-filled so the user can edit it
+  // directly (e.g. backspace "24" and type "28") rather than retyping from scratch.
+  private static string PromptEditable(string prompt, string defaultValue)
+  {
+    while (true)
+    {
+      AnsiConsole.Markup($"[green]?[/] {prompt}");
+      var input = new StringBuilder(defaultValue);
+      Console.Write(defaultValue);
+
+      while (true)
+      {
+        var key = Console.ReadKey(intercept: true);
+
+        if (key.Key == ConsoleKey.Enter)
+        {
+          Console.WriteLine();
+          break;
+        }
+
+        if (key.Key == ConsoleKey.Backspace)
+        {
+          if (input.Length > 0)
+          {
+            input.Remove(input.Length - 1, 1);
+            Console.Write("\b \b");
+          }
+        }
+        else if (!char.IsControl(key.KeyChar))
+        {
+          input.Append(key.KeyChar);
+          Console.Write(key.KeyChar);
+        }
+      }
+
+      var value = input.ToString().Trim();
+      if (IpRange.TryParse(value, out _))
+        return value;
+
+      AnsiConsole.MarkupLine("[red]Invalid range.[/] Examples: [dim]192.168.1.0/24[/]  or  [dim]192.168.1.1-100[/]");
+    }
   }
 
   private static uint IpToUint(System.Net.IPAddress ip)
